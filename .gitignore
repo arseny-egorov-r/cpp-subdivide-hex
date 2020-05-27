@@ -1,0 +1,4 @@
+.DS_Store
+*.o
+executable
+out.msh
