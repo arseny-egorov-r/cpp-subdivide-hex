@@ -47,18 +47,26 @@ float **GMeshReader::load_nodes()
 
 std::vector<Hexahedron> *GMeshReader::load_hexahedrons()
 {
-    this->mesh_file >> this->n_hexas;
+    int n_elements;
+    this->mesh_file >> n_elements;
+    this->n_hexas = 0;
     int idx, type, add_params;
     int vertices[8]; // v1, v2, v3, v4, v5, v6, v7, v8;
-    for (int i = 0; i < this->n_hexas; i++)
+    for (int i = 0; i < n_elements; i++)
     {
         this->mesh_file >> idx >> type >> add_params;
-        if (type == 5)
-        {
-            this->mesh_file >> vertices[0] >> vertices[1] >> vertices[2];
-            this->mesh_file >> vertices[3] >> vertices[4] >> vertices[5];
-            this->mesh_file >> vertices[6] >> vertices[7];
-            this->hexas_idx.push_back(Hexahedron(idx, vertices));
+        switch (type) {
+            case 5:
+                this->n_hexas++;
+                this->mesh_file >> vertices[0] >> vertices[1] >> vertices[2];
+                this->mesh_file >> vertices[3] >> vertices[4] >> vertices[5];
+                this->mesh_file >> vertices[6] >> vertices[7];
+                this->hexas_idx.push_back(Hexahedron(idx, vertices));
+                break;
+            case 3:
+                int temp;
+                this->mesh_file >> temp >> temp >> temp >> temp;
+                break;
         }
     }
     this->read_assert("$EndElements");
