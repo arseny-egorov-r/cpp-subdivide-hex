@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 #include "hexahedron_algo.h"
 #include "gmesh_reader_writer.h"
@@ -22,7 +23,9 @@ int main(int argc, char **argv)
      */
     std::vector<Hexahedron> *hexas = gmsh_reader.load_hexahedrons();
 
+    std::cout << "Number of hexas: " << gmsh_reader.n_hexas << std::endl;
     // Get tetras
+    auto t1 = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<int>> all_tetras;
     for (int i = 0; i < hexas->size(); i++)
     {
@@ -36,6 +39,10 @@ int main(int argc, char **argv)
             all_tetras.push_back(tetras[j]);
         }
     }
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+
+    std::cout << "Running time in ms: " << duration << std::endl;
 
     // Write everything to output file
     GMeshWriter gmsh_writer(mesh_path_out);
